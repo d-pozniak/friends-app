@@ -47,15 +47,25 @@ p{
     height: 75vh;
     display: grid;
     grid-template:
-    "search search" 30px
+    "search search" 60px
     "filter  result" 1fr
-    / 200px 1fr;
+    / minmax(220px, 21vw) 1fr;
 }
 .search-bar{
     grid-area: search;
 }
+.search-form{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .search-input{
-    width: calc(100% - 75px);
+    width: calc(100% - 65px);
+    height: 49px;
+    border-radius: 10px;
+}
+.search-button{
+    border-radius: 50%;
 }
 .filter-menu{
     grid-area: filter;
