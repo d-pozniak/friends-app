@@ -1,8 +1,10 @@
 const searchBar = document.querySelector('#search-bar'),
-    searchBtn = document.querySelector('#search-btn'),
-    resultField = document.querySelector('.user-library');
+    resultField = document.querySelector('.user-library'),
+    usersToFetch = 100;
+    usersPerPage = 9;
+    pagesAmount = Math.ceil(usersToFetch/usersPerPage);
 
-fetch('https://randomuser.me/api/?results=500&inc=gender,name,location,email,dob,picture')
+fetch('https://randomuser.me/api/?results=100&inc=gender,name,location,email,dob,picture')
     .then((response) => {
         if (!response.ok) {
             throw new Error(`HTTP error: ${response.status}`);
@@ -20,7 +22,11 @@ fetch('https://randomuser.me/api/?results=500&inc=gender,name,location,email,dob
 function initialize(users) { //gets array of objects-users
     const allCards = users.map(user => createUserCard(user));
     console.log(users);
-    updateResult(allCards);
+    const cardsByPage = [];
+    for (let i=0; i<pagesAmount; i++){
+        cardsByPage.push(allCards.slice(i*usersPerPage, (i+1)*usersPerPage));
+    }
+    updateResult(cardsByPage[0]);
 
     function searchByName(e){
         console.log(e.target.value);
@@ -30,8 +36,37 @@ function initialize(users) { //gets array of objects-users
         )
         updateResult(cardsToShow);
     }
-
+    function sortByAge(e){
+        document.getElementsByName('Name').forEach(input => input.checked = false);
+        let cardsToShow;
+        if (e.target.id === 'age-inc'){
+            cardsToShow = allCards.sort((a,b) => +a.querySelector('.card-age').innerText - (+b.querySelector('.card-age').innerText));
+        } else {
+            cardsToShow = allCards.sort((a,b) => -(+a.querySelector('.card-age').innerText) + (+b.querySelector('.card-age').innerText));
+        }
+        updateResult(cardsToShow);
+    }
+    function sortByName(e){
+        document.getElementsByName('Age').forEach(input => input.checked = false);
+        let cardsToShow;
+        if (e.target.id === 'name-inc'){
+            cardsToShow = allCards.sort((a,b) => a.querySelector('.card-name').innerText.localeCompare(b.querySelector('.card-name').innerText));
+        } else {
+            cardsToShow = allCards.sort((a,b) => b.querySelector('.card-name').innerText.localeCompare(a.querySelector('.card-name').innerText));
+        }
+        updateResult(cardsToShow);
+    }
+    function resetFilters(e){
+        document.getElementsByName('Name').forEach(input => input.checked = false);
+        document.getElementsByName('Age').forEach(input => input.checked = false);
+        searchBar.value = '';
+        searchBar.ariaPlaceholder = 'Enter name..'
+        updateResult(cardsByPage[0]);
+    }
     searchBar.addEventListener('input', searchByName);
+    document.querySelector('.name-sort').addEventListener('input',sortByName);
+    document.querySelector('.age-sort').addEventListener('input',sortByAge);
+    document.getElementById('reset-btn').addEventListener('click', resetFilters);
 }
 function updateResult(dataToShow) {
     resultField.replaceChildren();

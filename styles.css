@@ -47,7 +47,7 @@ p{
     height: 75vh;
     display: grid;
     grid-template:
-    "search search" 60px
+    "filter search" 60px
     "filter  result" 1fr
     / minmax(220px, 21vw) 1fr;
 }
@@ -64,9 +64,9 @@ p{
     height: 49px;
     border-radius: 10px;
 }
-.search-button{
-    border-radius: 50%;
-}
+/*.search-button{*/
+/*    border-radius: 50%;*/
+/*}*/
 .filter-menu{
     grid-area: filter;
 }
